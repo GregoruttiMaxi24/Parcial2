@@ -1,4 +1,4 @@
-# API de Componentes de PC y Periféricos — Parcial 1
+# API de Componentes de PC y Periféricos — Parcial 2
 
 API RESTful de una tienda de componentes de computadora y periféricos, hecha
 con Node.js, Express y MongoDB (Mongoose).
