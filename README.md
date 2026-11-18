@@ -1,131 +1,205 @@
-# API de Componentes de PC y Periféricos — Parcial 2
+# PC Store — Parcial 2
 
-API RESTful de una tienda de componentes de computadora y periféricos, hecha
-con Node.js, Express y MongoDB (Mongoose).
+Aplicación web de una tienda de componentes de computadora y periféricos. El proyecto está desarrollado con el stack MERN, utilizando Node.js, Express, MongoDB y React.
+
+La idea del proyecto es tener una tienda donde los usuarios puedan registrarse, iniciar sesión y consultar los productos disponibles. También cuenta con un panel de administración desde el cual se pueden gestionar los productos y las categorías.
 
 ## Datos del proyecto
 
-- **Nombre y Apellido:** _Completar con tu nombre_
+- **Nombres y Apellidos:** Máximo Gregorutti - Alan Ortiz
 - **Materia:** Aplicaciones Híbridas
 - **Docente:** Jonathan Emanuel Cruz
 - **Comisión:** DWN4AV
 
-> Recordá completar tu nombre acá y también en `public/index.html` (en el
-> pie de página) antes de entregar.
-
 ## Stack utilizado
 
-- Node.js + Express 5
-- MongoDB + Mongoose
-- bcrypt (hash de contraseñas)
-- dotenv (variables de entorno)
-- chalk (logs de consola)
+### Backend
+- Node.js + Express 5: para desarrollar el servidor y las rutas de la API.
+- MongoDB + Mongoose: para almacenar y administrar los datos.
+- bcrypt: para proteger las contraseñas mediante hash.
+- JSON Web Token (JWT): para la autenticación de usuarios.
+- dotenv: para manejar las variables de entorno.
+- chalk: para mostrar mensajes en la consola.
+
+### Frontend
+- React: para desarrollar la interfaz de la aplicación.
+- Vite: para configurar el entorno de desarrollo.
+- React Router DOM: para manejar la navegación entre páginas.
+- Context API: para compartir los datos de la sesión del usuario.
+- CSS: para los estilos de la aplicación.
 
 ## Estructura del proyecto
 
-```
-config/         Conexión a MongoDB
-controllers/    Lógica de cada recurso (categorías, productos, usuarios)
-models/         Esquemas de Mongoose
-routes/         Definición de rutas de la API
-middlewares/    Validación de ids y manejo de errores
-public/         Página HTML informativa de la API
-scripts/        Script para cargar datos de ejemplo
-index.js        Punto de entrada del servidor
+```text
+PC-Store/
+│
+├── config/              Conexión a MongoDB
+├── controllers/         Lógica de cada recurso
+├── middlewares/         Autenticación, permisos y validaciones
+├── models/              Esquemas de Mongoose
+├── routes/              Rutas de la API
+├── services/            Operaciones con la base de datos
+├── public/              Archivos públicos del backend
+├── scripts/             Scripts del proyecto
+├── index.js             Punto de entrada del servidor
+│
+└── frontend/
+    ├── public/          Archivos públicos de React
+    ├── src/
+    │   ├── components/  Componentes reutilizables
+    │   ├── context/     Contexto de autenticación
+    │   ├── pages/       Páginas de la aplicación
+    │   ├── routes/      Rutas protegidas
+    │   ├── services/    Consumo de la API
+    │   ├── App.jsx
+    │   └── main.jsx
+    └── package.json
 ```
 
 ## Instalación y uso
 
-1. Instalar dependencias:
-   ```bash
-   npm install
-   ```
-2. Copiar `.env.example` a `.env` y completar con tu cadena de conexión de
-   MongoDB (podés crear una gratis en
-   [MongoDB Atlas](https://www.mongodb.com/atlas)):
-   ```
-   MONGO_URI=mongodb+srv://usuario:password@cluster0.mongodb.net/parcial1-componentes-pc
-   PORT=3000
-   ```
-3. (Opcional pero recomendado) Cargar datos de ejemplo:
-   ```bash
-   npm run seed
-   ```
-4. Levantar el servidor:
-   ```bash
-   npm start
-   ```
-5. Abrir [http://localhost:3000](http://localhost:3000) — ahí vas a ver la
-   página con la descripción de la API y los links a cada endpoint.
+Para ejecutar el proyecto localmente se necesitan Node.js, npm y una base de datos MongoDB.
 
-## Endpoints
+### 1. Configurar el backend
+
+Desde la carpeta principal del proyecto, instalar las dependencias:
+
+```bash
+npm install
+```
+
+Crear un archivo `.env` con los datos necesarios para la conexión a MongoDB y la clave utilizada para generar los tokens JWT.
+
+Ejemplo:
+
+```env
+PORT=3000
+JWT_SECRET=tu_clave_secreta
+MONGO_URI=tu_url_de_conexion_a_mongodb
+```
+
+La variable de conexión debe coincidir con la que utiliza el archivo `config/db.js`.
+
+Iniciar el servidor:
+
+```bash
+npm start
+```
+
+Si el proyecto no tiene configurado ese script, se puede iniciar con:
+
+```bash
+node index.js
+```
+
+El servidor utiliza el puerto 3000 por defecto.
+
+### 2. Configurar el frontend
+
+Abrir otra terminal y entrar en la carpeta `frontend`:
+
+```bash
+cd frontend
+```
+
+Instalar las dependencias:
+
+```bash
+npm install
+```
+
+Iniciar React con Vite:
+
+```bash
+npm run dev
+```
+
+La aplicación estará disponible normalmente en:
+
+```text
+http://localhost:5173
+```
+
+## Funcionalidades
+
+### Usuarios
+- Registro de nuevos usuarios.
+- Inicio y cierre de sesión.
+- Contraseñas protegidas con bcrypt.
+- Autenticación mediante JWT.
+- Persistencia de la sesión utilizando localStorage.
+- Diferenciación entre usuarios clientes y administradores.
+
+### Productos
+- Visualización del catálogo.
+- Búsqueda y filtros de productos.
+- Consulta de información de cada producto.
+- Crear, editar y eliminar productos desde el panel de administración.
+
+### Categorías
+- Visualización de categorías.
+- Crear nuevas categorías.
+- Editar categorías existentes.
+- Eliminar categorías.
+- Activar o desactivar categorías.
+
+### Panel de administración
+- Acceso exclusivo para administradores.
+- Gestión de productos y categorías.
+- Formularios para crear y modificar registros.
+- Protección de las operaciones mediante JWT y validación de permisos en el backend.
+
+## Endpoints principales
 
 ### Categorías (`/api/categorias`)
 
-| Método | Endpoint              | Descripción                                                        |
-| ------ | ---------------------- | ------------------------------------------------------------------- |
-| GET    | `/api/categorias`      | Lista todas. Filtro `?activa=true`, búsqueda `?buscar=texto`        |
-| GET    | `/api/categorias/:id`  | Obtiene una por id                                                   |
-| POST   | `/api/categorias`      | Crea una (`nombre`, `descripcion`, `activa`)                         |
-| PUT    | `/api/categorias/:id`  | Actualiza una existente                                              |
-| DELETE | `/api/categorias/:id`  | Elimina una                                                          |
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/categorias` | Lista las categorías. Permite filtrar por estado y buscar por nombre. |
+| GET | `/api/categorias/:id` | Obtiene una categoría por su ID. |
+| POST | `/api/categorias` | Crea una categoría. |
+| PUT | `/api/categorias/:id` | Actualiza una categoría. |
+| DELETE | `/api/categorias/:id` | Elimina una categoría. |
 
 ### Productos (`/api/productos`)
 
-| Método | Endpoint              | Descripción                                                        |
-| ------ | ---------------------- | ------------------------------------------------------------------- |
-| GET    | `/api/productos`       | Lista todos. Filtros combinables: `?categoria=`, `?marca=`, `?destacado=true`, `?enStock=true`, `?precioMin=`, `?precioMax=`. Búsqueda: `?buscar=texto` |
-| GET    | `/api/productos/:id`   | Obtiene uno por id                                                   |
-| POST   | `/api/productos`       | Crea uno (`nombre`, `precio`, `stock`, `marca`, `categoria`, `imagen`, `destacado`) |
-| PUT    | `/api/productos/:id`   | Actualiza uno existente                                              |
-| DELETE | `/api/productos/:id`   | Elimina uno                                                          |
-
-`categoria` debe ser el `_id` de una categoría ya creada (o, para probar
-rápido a mano, también acepta el **nombre** exacto de la categoría, por
-ejemplo `"Procesadores"`).
-
-Si no se envía `imagen`, se genera automáticamente un placeholder con el
-nombre del producto (`https://placehold.co/500x400?text=...`).
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/productos` | Lista los productos y permite aplicar filtros y búsquedas. |
+| GET | `/api/productos/:id` | Obtiene un producto por su ID. |
+| POST | `/api/productos` | Crea un producto. |
+| PUT | `/api/productos/:id` | Actualiza un producto. |
+| DELETE | `/api/productos/:id` | Elimina un producto. |
 
 ### Usuarios (`/api/usuarios`)
 
-No cuenta como una de las dos rutas principales del parcial.
+| Método | Endpoint | Descripción |
+|---|---|---|
+| POST | `/api/usuarios/registro` | Registra un usuario. |
+| POST | `/api/usuarios/login` | Inicia sesión y devuelve un token JWT. |
+| GET | `/api/usuarios` | Lista los usuarios. Solo administradores. |
+| GET | `/api/usuarios/:id` | Consulta un usuario según los permisos. |
+| PUT | `/api/usuarios/:id` | Actualiza los datos de un usuario según los permisos. |
+| DELETE | `/api/usuarios/:id` | Elimina un usuario. Solo administradores. |
 
-| Método | Endpoint                 | Descripción                              |
-| ------ | ------------------------- | ------------------------------------------ |
-| POST   | `/api/usuarios/registro`  | Crea un usuario (`nombre`, `email`, `password`, `rol`) |
-| POST   | `/api/usuarios/login`     | Inicia sesión (`email`, `password`)        |
-| GET    | `/api/usuarios`           | Lista usuarios. Filtro `?rol=`, búsqueda `?buscar=texto` |
-| GET    | `/api/usuarios/:id`       | Obtiene uno por id                         |
-| PUT    | `/api/usuarios/:id`       | Actualiza uno existente                    |
-| DELETE | `/api/usuarios/:id`       | Elimina uno                                |
+Las operaciones para crear, editar y eliminar productos y categorías requieren iniciar sesión con una cuenta administradora.
 
-## Validaciones incluidas
+## Validaciones y seguridad
 
-- Campos obligatorios (nombre, precio, categoría, email, contraseña, etc.)
-  validados tanto a nivel de esquema (Mongoose) como en los controladores.
-- El `id` de la URL se valida como `ObjectId` válido de Mongo antes de
-  consultar la base (middleware `validarObjectId`).
-- Al crear o actualizar un producto, se verifica que la `categoria` indicada
-  exista realmente en la base.
-- Email con formato válido y único; contraseña con mínimo 6 caracteres,
-  guardada siempre hasheada con `bcrypt`.
-- Nombre de categoría único (no permite duplicados).
-- Manejo centralizado de errores (`middlewares/errorHandler.js`): errores de
-  validación de Mongoose, ids duplicados (email/categoría repetida) y
-  errores de casteo devuelven respuestas claras con el status HTTP
-  correspondiente (400, 404, 409).
+Durante el desarrollo se incorporaron distintas validaciones para evitar que se guarden datos incorrectos:
 
-## Formato de respuesta
+- Los campos obligatorios se controlan tanto en el frontend como en el backend.
+- Las contraseñas tienen un mínimo de 6 caracteres y se guardan utilizando bcrypt.
+- Los emails deben tener un formato válido y no pueden repetirse.
+- Los nombres de las categorías no pueden repetirse.
+- Se verifica que los IDs recibidos tengan un formato válido de MongoDB.
+- Al crear o actualizar productos se comprueba que la categoría exista.
+- Se utiliza JWT para identificar a los usuarios.
+- Se implementaron middlewares para verificar el token, el rol de administrador y la propiedad de una cuenta.
+- Los errores se manejan desde un middleware centralizado para devolver respuestas con el código HTTP correspondiente.
 
-Todas las respuestas devuelven JSON con la forma:
+## Autor
 
-```json
-{ "ok": true, "productos": [...] }
-```
+**Máximo Gregorutti** **Alan Ortiz**
 
-o, en caso de error:
-
-```json
-{ "ok": false, "mensaje": "Descripción del error" }
-```
+Proyecto realizado para la materia Aplicaciones Híbridas — Escuela Da Vinci.

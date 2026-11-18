@@ -30,5 +30,5 @@ export function actualizarUsuarioPorId(id, cambios) {
 
 // Eliminar usuario
 export function eliminarUsuarioPorId(id) {
-  return Usuario.findByIdAndDelete(id)
+  return Usuario.findByIdAndDelete(id).select('-password')
 }

@@ -52,7 +52,7 @@ export async function crearCategoria(req, res, next) {
   try {
     const { nombre, descripcion, activa } = req.body
 
-    if (!nombre || !nombre.trim()) {
+    if (typeof nombre !== 'string' || !nombre.trim()) {
       return res.status(400).json({
         ok: false,
         mensaje: 'El nombre de la categoría es obligatorio',
@@ -60,8 +60,8 @@ export async function crearCategoria(req, res, next) {
     }
 
     const categoria = await crearCategoriaService({
-      nombre,
-      descripcion,
+      nombre: nombre.trim(),
+      descripcion: typeof descripcion === 'string' ? descripcion.trim() : '',
       activa,
     })
 
@@ -74,9 +74,26 @@ export async function crearCategoria(req, res, next) {
 // PUT /api/categorias/:id
 export async function actualizarCategoria(req, res, next) {
   try {
+    const datos = { ...req.body }
+
+    if (datos.nombre !== undefined) {
+      if (typeof datos.nombre !== 'string' || !datos.nombre.trim()) {
+        return res.status(400).json({
+          ok: false,
+          mensaje: 'El nombre de la categoría no puede estar vacío',
+        })
+      }
+
+      datos.nombre = datos.nombre.trim()
+    }
+
+    if (datos.descripcion !== undefined && typeof datos.descripcion === 'string') {
+      datos.descripcion = datos.descripcion.trim()
+    }
+
     const categoria = await actualizarCategoriaPorId(
       req.params.id,
-      req.body
+      datos
     )
 
     if (!categoria) {

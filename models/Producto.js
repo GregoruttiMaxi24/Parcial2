@@ -21,6 +21,9 @@ const productoSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'El stock es obligatorio'],
       min: [0, 'El stock no puede ser negativo'],
+      validate: {validator: Number.isInteger,
+      message: 'El stock debe ser un número entero',
+      },
       default: 0,
     },
     marca: {
